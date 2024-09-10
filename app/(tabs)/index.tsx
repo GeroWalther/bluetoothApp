@@ -1,14 +1,15 @@
 import { Stack } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
-import { ScreenContent } from '~/components/ScreenContent';
+import { Button } from '~/components/Button';
 
 export default function Home() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Tab One' }} />
-      <View style={styles.container}>
-        <ScreenContent path="app/(tabs)/index.tsx" title="Tab One" />
+      <Stack.Screen options={{ title: 'Connect to PC', headerTintColor: 'white' }} />
+      <View style={styles.container} className="justify-around bg-blue-500">
+        <Text className=" self-center text-3xl text-white">Bluetooth Keyboard App</Text>
+        <Button title="Connect" onPress={() => {}} />
       </View>
     </>
   );
