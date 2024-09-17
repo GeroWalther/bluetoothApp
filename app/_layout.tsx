@@ -13,8 +13,12 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" />
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="control" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="bluetoothListModal"
+          options={{ presentation: 'modal', headerShown: false }}
+        />
       </Stack>
     </>
   );
