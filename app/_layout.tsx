@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import '../global.css';
 
 import { Stack } from 'expo-router';
+import { Container } from '~/components/Container';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -10,7 +11,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   return (
-    <>
+    <Container>
       <StatusBar style="light" />
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -20,6 +21,6 @@ export default function RootLayout() {
           options={{ presentation: 'modal', headerShown: false }}
         />
       </Stack>
-    </>
+    </Container>
   );
 }

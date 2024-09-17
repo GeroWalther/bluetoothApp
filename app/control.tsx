@@ -16,7 +16,7 @@ const KeyboardMouseScreen = () => {
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 400 : 100}>
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 500 : 100}>
       <View>
         <View className="">
           <Button
