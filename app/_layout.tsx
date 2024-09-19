@@ -16,6 +16,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="control" options={{ headerShown: false }} />
+        <Stack.Screen name="test" options={{ headerShown: false }} />
         <Stack.Screen
           name="bluetoothListModal"
           options={{ presentation: 'modal', headerShown: false }}

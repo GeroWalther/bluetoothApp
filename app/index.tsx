@@ -19,6 +19,7 @@ const MainScreen = () => {
         <Text className="text-2xl font-semibold text-white">Bluetooth Keyboard & Mouse app</Text>
         <Button onPress={handleScan}>Connect to PC via Bluetooth</Button>
         <Button onPress={() => router.navigate('/control')}>Navigate to Keyboard Screen.</Button>
+        {/* <Button onPress={() => router.navigate('/test')}>Navigate to Keyboard Screen.</Button> */}
       </View>
     </ScrollView>
   );
