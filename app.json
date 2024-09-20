@@ -3,7 +3,6 @@
     "name": "bluetoothKeyboard",
     "slug": "bluetoothKeyboard",
     "version": "1.0.0",
-
     "scheme": "bluetoothKeyboard",
     "web": {
       "bundler": "metro",
@@ -16,36 +15,58 @@
         "react-native-ble-plx",
         {
           "isBackgroundEnabled": true,
-          "modes": ["peripheral", "central"],
+          "modes": [
+            "peripheral",
+            "central"
+          ],
           "bluetoothAlwaysPermission": "Allow Bluetooth Keyboard App to connect to bluetooth devices"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
-
       "tsconfigPaths": true
     },
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app needs Bluetooth to connect to your devices.",
+        "NSBluetoothPeripheralUsageDescription": "Bluetooth access is needed to communicate with external devices.",
+        "NSLocationWhenInUseUsageDescription": "Location access is required to find nearby Bluetooth devices."
+      },
+      "bundleIdentifier": "com.anonymous.bluetoothKeyboard"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.INTERNET"
+      ],
+      "package": "com.anonymous.bluetoothKeyboard"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2fa1e908-0c6a-4d04-b031-0d0d78009ab2"
       }
-    }
+    },
+    "owner": "aminfarooq"
   }
 }

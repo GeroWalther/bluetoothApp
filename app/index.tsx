@@ -1,6 +1,6 @@
-import { useRouter } from 'expo-router';
+import {useRouter} from 'expo-router';
 import React from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import {ScrollView, Text, View, StyleSheet} from 'react-native';
 
 import Button from './components/Button';
 
@@ -16,10 +16,16 @@ const MainScreen = () => {
       contentContainerStyle={styles.view}
       className="bg-blue-500">
       <View>
-        <Text className="text-2xl font-semibold text-white">Bluetooth Keyboard & Mouse app</Text>
+        <Text className="text-2xl font-semibold text-white">
+          Bluetooth Keyboard & Mouse app
+        </Text>
         <Button onPress={handleScan}>Connect to PC via Bluetooth</Button>
-        <Button onPress={() => router.navigate('/control')}>Navigate to Keyboard Screen.</Button>
-        {/* <Button onPress={() => router.navigate('/test')}>Navigate to Keyboard Screen.</Button> */}
+        <Button onPress={() => router.navigate('/control')}>
+          Navigate to Keyboard Screen.
+        </Button>
+        <Button onPress={() => router.navigate('/test')}>
+          Navigate to Test Screen.
+        </Button>
       </View>
     </ScrollView>
   );
@@ -28,5 +34,5 @@ const MainScreen = () => {
 export default MainScreen;
 
 const styles = StyleSheet.create({
-  view: { justifyContent: 'center', alignItems: 'center', flex: 1 },
+  view: {justifyContent: 'center', alignItems: 'center', flex: 1},
 });

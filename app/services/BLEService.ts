@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from 'react-native';
+import {PermissionsAndroid, Platform} from 'react-native';
 import {
   BleError,
   BleErrorCode,
@@ -40,8 +40,8 @@ class BLEServiceInstance {
   getDevice = () => this.device;
 
   initializeBLE = () =>
-    new Promise<void>((resolve) => {
-      const subscription = this.manager.onStateChange((state) => {
+    new Promise<void>(resolve => {
+      const subscription = this.manager.onStateChange(state => {
         switch (state) {
           case BluetoothState.Unsupported:
             this.showErrorToast('');
@@ -77,7 +77,7 @@ class BLEServiceInstance {
     return this.manager
       .cancelDeviceConnection(this.device.id)
       .then(() => this.showSuccessToast('Device disconnected'))
-      .catch((error) => {
+      .catch(error => {
         if (error?.code !== BleErrorCode.DeviceDisconnected) {
           this.onError(error);
         }
@@ -88,7 +88,7 @@ class BLEServiceInstance {
     this.manager
       .cancelDeviceConnection(id)
       .then(() => this.showSuccessToast('Device disconnected'))
-      .catch((error) => {
+      .catch(error => {
         if (error?.code !== BleErrorCode.DeviceDisconnected) {
           this.onError(error);
         }
@@ -101,10 +101,10 @@ class BLEServiceInstance {
   scanDevices = async (
     onDeviceFound: (device: Device) => void,
     UUIDs: UUID[] | null = null,
-    legacyScan?: boolean
+    legacyScan?: boolean,
   ) => {
     this.manager
-      .startDeviceScan(UUIDs, { legacyScan }, (error, device) => {
+      .startDeviceScan(UUIDs, {legacyScan}, (error, device) => {
         if (error) {
           this.onError(error);
           console.error(error.message);
@@ -126,12 +126,15 @@ class BLEServiceInstance {
       this.manager.stopDeviceScan();
       this.manager
         .connectToDevice(deviceId)
-        .then((device) => {
+        .then(device => {
           this.device = device;
           resolve(device);
         })
-        .catch((error) => {
-          if (error.errorCode === BleErrorCode.DeviceAlreadyConnected && this.device) {
+        .catch(error => {
+          if (
+            error.errorCode === BleErrorCode.DeviceAlreadyConnected &&
+            this.device
+          ) {
             resolve(this.device);
           } else {
             this.onError(error);
@@ -149,17 +152,20 @@ class BLEServiceInstance {
       }
       this.manager
         .discoverAllServicesAndCharacteristicsForDevice(this.device.id)
-        .then((device) => {
+        .then(device => {
           resolve(device);
           this.device = device;
         })
-        .catch((error) => {
+        .catch(error => {
           this.onError(error);
           reject(error);
         });
     });
 
-  readCharacteristicForDevice = async (serviceUUID: UUID, characteristicUUID: UUID) =>
+  readCharacteristicForDevice = async (
+    serviceUUID: UUID,
+    characteristicUUID: UUID,
+  ) =>
     new Promise<Characteristic>((resolve, reject) => {
       if (!this.device) {
         this.showErrorToast(deviceNotConnectedErrorText);
@@ -167,11 +173,15 @@ class BLEServiceInstance {
         return;
       }
       this.manager
-        .readCharacteristicForDevice(this.device.id, serviceUUID, characteristicUUID)
-        .then((characteristic) => {
+        .readCharacteristicForDevice(
+          this.device.id,
+          serviceUUID,
+          characteristicUUID,
+        )
+        .then(characteristic => {
           resolve(characteristic);
         })
-        .catch((error) => {
+        .catch(error => {
           this.onError(error);
         });
     });
@@ -179,7 +189,7 @@ class BLEServiceInstance {
   writeCharacteristicWithResponseForDevice = async (
     serviceUUID: UUID,
     characteristicUUID: UUID,
-    time: Base64
+    time: Base64,
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
@@ -190,9 +200,9 @@ class BLEServiceInstance {
         this.device.id,
         serviceUUID,
         characteristicUUID,
-        time
+        time,
       )
-      .catch((error) => {
+      .catch(error => {
         this.onError(error);
       });
   };
@@ -200,7 +210,7 @@ class BLEServiceInstance {
   writeCharacteristicWithoutResponseForDevice = async (
     serviceUUID: UUID,
     characteristicUUID: UUID,
-    time: Base64
+    time: Base64,
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
@@ -211,9 +221,9 @@ class BLEServiceInstance {
         this.device.id,
         serviceUUID,
         characteristicUUID,
-        time
+        time,
       )
-      .catch((error) => {
+      .catch(error => {
         this.onError(error);
       });
   };
@@ -224,7 +234,7 @@ class BLEServiceInstance {
     onCharacteristicReceived: (characteristic: Characteristic) => void,
     onError: (error: Error) => void,
     transactionId?: TransactionId,
-    hideErrorDisplay?: boolean
+    hideErrorDisplay?: boolean,
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
@@ -236,7 +246,10 @@ class BLEServiceInstance {
       characteristicUUID,
       (error, characteristic) => {
         if (error) {
-          if (error.errorCode === 2 && this.isCharacteristicMonitorDisconnectExpected) {
+          if (
+            error.errorCode === 2 &&
+            this.isCharacteristicMonitorDisconnectExpected
+          ) {
             this.isCharacteristicMonitorDisconnectExpected = false;
             return;
           }
@@ -251,12 +264,13 @@ class BLEServiceInstance {
           onCharacteristicReceived(characteristic);
         }
       },
-      transactionId
+      transactionId,
     );
   };
 
-  setupCustomMonitor: BleManager['monitorCharacteristicForDevice'] = (...args) =>
-    this.manager.monitorCharacteristicForDevice(...args);
+  setupCustomMonitor: BleManager['monitorCharacteristicForDevice'] = (
+    ...args
+  ) => this.manager.monitorCharacteristicForDevice(...args);
 
   finishMonitor = () => {
     this.isCharacteristicMonitorDisconnectExpected = true;
@@ -267,7 +281,7 @@ class BLEServiceInstance {
     serviceUUID: UUID,
     characteristicUUID: UUID,
     descriptorUUID: UUID,
-    data: Base64
+    data: Base64,
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
@@ -279,9 +293,9 @@ class BLEServiceInstance {
         serviceUUID,
         characteristicUUID,
         descriptorUUID,
-        data
+        data,
       )
-      .catch((error) => {
+      .catch(error => {
         this.onError(error);
       });
   };
@@ -289,15 +303,20 @@ class BLEServiceInstance {
   readDescriptorForDevice = async (
     serviceUUID: UUID,
     characteristicUUID: UUID,
-    descriptorUUID: UUID
+    descriptorUUID: UUID,
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
     return this.manager
-      .readDescriptorForDevice(this.device.id, serviceUUID, characteristicUUID, descriptorUUID)
-      .catch((error) => {
+      .readDescriptorForDevice(
+        this.device.id,
+        serviceUUID,
+        characteristicUUID,
+        descriptorUUID,
+      )
+      .catch(error => {
         this.onError(error);
       });
   };
@@ -307,7 +326,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.servicesForDevice(this.device.id).catch((error) => {
+    return this.manager.servicesForDevice(this.device.id).catch(error => {
       this.onError(error);
     });
   };
@@ -317,9 +336,11 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.characteristicsForDevice(this.device.id, serviceUUID).catch((error) => {
-      this.onError(error);
-    });
+    return this.manager
+      .characteristicsForDevice(this.device.id, serviceUUID)
+      .catch(error => {
+        this.onError(error);
+      });
   };
 
   getDescriptorsForDevice = (serviceUUID: UUID, characteristicUUID: UUID) => {
@@ -329,7 +350,7 @@ class BLEServiceInstance {
     }
     return this.manager
       .descriptorsForDevice(this.device.id, serviceUUID, characteristicUUID)
-      .catch((error) => {
+      .catch(error => {
         this.onError(error);
       });
   };
@@ -350,7 +371,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.connectedDevices(expectedServices).catch((error) => {
+    return this.manager.connectedDevices(expectedServices).catch(error => {
       this.onError(error);
     });
   };
@@ -360,12 +381,16 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.requestMTUForDevice(this.device.id, mtu).catch((error) => {
-      this.onError(error);
-    });
+    return this.manager
+      .requestMTUForDevice(this.device.id, mtu)
+      .catch(error => {
+        this.onError(error);
+      });
   };
 
-  onDeviceDisconnected = (listener: (error: BleError | null, device: Device | null) => void) => {
+  onDeviceDisconnected = (
+    listener: (error: BleError | null, device: Device | null) => void,
+  ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
@@ -381,7 +406,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.readRSSIForDevice(this.device.id).catch((error) => {
+    return this.manager.readRSSIForDevice(this.device.id).catch(error => {
       this.onError(error);
     });
   };
@@ -391,7 +416,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.devices([this.device.id]).catch((error) => {
+    return this.manager.devices([this.device.id]).catch(error => {
       this.onError(error);
     });
   };
@@ -400,17 +425,17 @@ class BLEServiceInstance {
     this.manager.cancelTransaction(transactionId);
 
   enable = () =>
-    this.manager.enable().catch((error) => {
+    this.manager.enable().catch(error => {
       this.onError(error);
     });
 
   disable = () =>
-    this.manager.disable().catch((error) => {
+    this.manager.disable().catch(error => {
       this.onError(error);
     });
 
   getState = () =>
-    this.manager.state().catch((error) => {
+    this.manager.state().catch(error => {
       this.onError(error);
     });
 
@@ -432,7 +457,10 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager.requestConnectionPriorityForDevice(this.device?.id, priority);
+    return this.manager.requestConnectionPriorityForDevice(
+      this.device?.id,
+      priority,
+    );
   };
 
   cancelDeviceConnection = () => {
@@ -450,9 +478,12 @@ class BLEServiceInstance {
     if (Platform.OS === 'android') {
       const apiLevel = parseInt(Platform.Version.toString(), 10);
 
-      if (apiLevel < 31 && PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION) {
+      if (
+        apiLevel < 31 &&
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      ) {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       }
@@ -466,8 +497,10 @@ class BLEServiceInstance {
         ]);
 
         return (
-          result['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED &&
-          result['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED
+          result['android.permission.BLUETOOTH_CONNECT'] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          result['android.permission.BLUETOOTH_SCAN'] ===
+            PermissionsAndroid.RESULTS.GRANTED
         );
       }
     }

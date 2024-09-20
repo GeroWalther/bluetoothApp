@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
-import { Device } from 'react-native-ble-plx';
+import React, {useState} from 'react';
+import {FlatList, Text, View} from 'react-native';
+import {Device} from 'react-native-ble-plx';
 
-import { BleDevice } from './components/BleDevice';
+import {BleDevice} from './components/BleDevice';
 import Button from './components/Button';
-import { BLEService } from './services/BLEService';
-import { cloneDeep } from './utils/cloneDeep';
+import {BLEService} from './services/BLEService';
+import {cloneDeep} from './utils/cloneDeep';
 
-type DeviceExtendedByUpdateTime = Device & { updateTimestamp: number };
+type DeviceExtendedByUpdateTime = Device & {updateTimestamp: number};
 
 const MIN_TIME_BEFORE_UPDATE_IN_MILLISECONDS = 5000;
 
-export function BluetoothTestScreen({ navigation }: any) {
+function TestScreen({navigation}: any) {
   const [isConnecting, setIsConnecting] = useState(false);
-  const [foundDevices, setFoundDevices] = useState<DeviceExtendedByUpdateTime[]>([]);
+  const [foundDevices, setFoundDevices] = useState<
+    DeviceExtendedByUpdateTime[]
+  >([]);
 
   const addFoundDevice = (device: Device) =>
-    setFoundDevices((prevState) => {
+    setFoundDevices(prevState => {
       if (!isFoundDeviceUpdateNecessary(prevState, device)) {
         return prevState;
       }
@@ -27,7 +29,9 @@ export function BluetoothTestScreen({ navigation }: any) {
         updateTimestamp: Date.now() + MIN_TIME_BEFORE_UPDATE_IN_MILLISECONDS,
       } as DeviceExtendedByUpdateTime;
 
-      const indexToReplace = nextState.findIndex((currentDevice) => currentDevice.id === device.id);
+      const indexToReplace = nextState.findIndex(
+        currentDevice => currentDevice.id === device.id,
+      );
       if (indexToReplace === -1) {
         return nextState.concat(extendedDevice);
       }
@@ -37,9 +41,11 @@ export function BluetoothTestScreen({ navigation }: any) {
 
   const isFoundDeviceUpdateNecessary = (
     currentDevices: DeviceExtendedByUpdateTime[],
-    updatedDevice: Device
+    updatedDevice: Device,
   ) => {
-    const currentDevice = currentDevices.find(({ id }) => updatedDevice.id === id);
+    const currentDevice = currentDevices.find(
+      ({id}) => updatedDevice.id === id,
+    );
     if (!currentDevice) {
       return true;
     }
@@ -57,9 +63,11 @@ export function BluetoothTestScreen({ navigation }: any) {
 
   const deviceRender = (device: Device) => (
     <BleDevice
-      onPress={(pickedDevice) => {
+      onPress={pickedDevice => {
         setIsConnecting(true);
-        BLEService.connectToDevice(pickedDevice.id).then(onConnectSuccess).catch(onConnectFail);
+        BLEService.connectToDevice(pickedDevice.id)
+          .then(onConnectSuccess)
+          .catch(onConnectFail);
       }}
       key={device.id}
       device={device}
@@ -67,26 +75,31 @@ export function BluetoothTestScreen({ navigation }: any) {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      {isConnecting && <Text style={{ fontSize: 30 }}>Connecting</Text>}
+    <View style={{flex: 1}}>
+      {isConnecting && <Text style={{fontSize: 30}}>Connecting</Text>}
 
       <Button
         onPress={() => {
           console.log('looking...');
 
           setFoundDevices([]);
-          BLEService.initializeBLE().then(() => BLEService.scanDevices(addFoundDevice, null, true));
+          BLEService.initializeBLE().then(() =>
+            BLEService.scanDevices(addFoundDevice, null, true),
+          );
         }}>
         Look for devices
       </Button>
-      <Button onPress={BLEService.requestBluetoothPermission}>Ask for permissions</Button>
+      <Button onPress={BLEService.requestBluetoothPermission}>
+        Ask for permissions
+      </Button>
 
       <FlatList
-        style={{ flex: 1 }}
-        data={foundDevices.filter((dvc) => dvc?.isConnectable)}
-        renderItem={({ item }) => deviceRender(item)}
-        keyExtractor={(device) => device.id}
+        style={{flex: 1}}
+        data={foundDevices.filter(dvc => dvc?.isConnectable)}
+        renderItem={({item}) => deviceRender(item)}
+        keyExtractor={device => device.id}
       />
     </View>
   );
 }
+export default TestScreen;
